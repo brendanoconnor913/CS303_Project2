@@ -1,0 +1,8 @@
+﻿  main.cpp
+c:\users\brendan\documents\visual studio 2015\projects\cs303proj2\cs303proj2\random.h(12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\brendan\documents\visual studio 2015\projects\cs303proj2\cs303proj2\elevator.h(33): warning C4018: '<': signed/unsigned mismatch
+c:\users\brendan\documents\visual studio 2015\projects\cs303proj2\cs303proj2\elevator.h(40): warning C4018: '>': signed/unsigned mismatch
+c:\users\brendan\documents\visual studio 2015\projects\cs303proj2\cs303proj2\elevator.h(57): warning C4018: '<': signed/unsigned mismatch
+c:\users\brendan\documents\visual studio 2015\projects\cs303proj2\cs303proj2\elevator.h(64): warning C4018: '>': signed/unsigned mismatch
+  CS303Proj2.vcxproj -> C:\Users\Brendan\Documents\Visual Studio 2015\Projects\CS303Proj2\Debug\CS303Proj2.exe
+  CS303Proj2.vcxproj -> C:\Users\Brendan\Documents\Visual Studio 2015\Projects\CS303Proj2\Debug\CS303Proj2.pdb (Partial PDB)
