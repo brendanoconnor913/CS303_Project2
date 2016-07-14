@@ -7,7 +7,7 @@ using namespace std;
 
 
 int main() {
-	int floors = 25;
+	int floors = 30;
 	int totalTime = 200;
 	double arrivalRate = .1;
 	bool showAllActions = true;

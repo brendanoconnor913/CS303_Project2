@@ -30,6 +30,7 @@ private:
 
 };
 
+// runs simulation till time reaches total_time
 void Simulation::run_simulation() {
 	for (clock = 0; clock < total_time; clock++) {
 		elevator.checkArrivals(clock, show_all);
@@ -37,6 +38,7 @@ void Simulation::run_simulation() {
 	}
 }
 
+// if calls to be executed work on it, else output idle
 void Simulation::moveElevator() {
 	if (elevator.passengersWaiting()) {
 		if (elevator.floorStop(show_all)) {
@@ -50,6 +52,7 @@ void Simulation::moveElevator() {
 	}
 }
 
+// output stat info from elevator
 void Simulation::show_stats() {
 	cout << "\n The number of passengers served was "
 		<< elevator.getPassengersServed() << endl;
@@ -65,25 +68,5 @@ void Simulation::show_stats() {
 	cout << "Passengers waiting to get to their destination: "
 		<< elevator.getTotalWaiting() << endl;
 }
-
-//unsigned int Processing_Time_Generator(unsigned int& arrival_time, unsigned int& clock_cycles) {
-//	return clock_cycles - arrival_time;
-//}
-//
-//void Arrival_Time_Generator(unsigned int& clock_cycles) {
-//	unsigned int arrival_time;
-//	arrival_time = clock_cycles;
-//}
-//
-//unsigned int Id_Generator(unsigned int& num_id) {
-//	unsigned int id;
-//	id = num_id++;
-//	return id;
-//}
-//
-//void Id_Generator_Wrapper() {
-//	unsigned int num_id = 0;
-//	Id_Generator(num_id);
-//}
 
 #endif

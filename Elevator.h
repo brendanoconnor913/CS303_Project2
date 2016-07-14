@@ -1,5 +1,6 @@
 #ifndef ELEVATOR_H
 #define ELEVATOR_H
+
 #include "list.h"
 #include "Random.h"
 #include "Passenger.h"
@@ -13,6 +14,7 @@ public:
 	Elevator(int floors, double arrival) : elevatorCalls(), numOnElev(0), direction(1), currentFloor(0), 
 		passengersServed(0),totalWaitTime(0), arrivalRate(arrival), topFloor(floors) {}
 
+	// moves elevator in the appropriate direction to execute task
 	void nextFloor(bool show_all) {
 		if (elevatorCalls.empty()) {
 			return;
@@ -20,7 +22,8 @@ public:
 		// determine if need to go up or down to execute current task
 		list<Passenger>::iterator currentTask = elevatorCalls.begin();
 		currentTask->incrementWait();
-		if (currentTask->isOnElevator()) {
+		if (currentTask->isOnElevator()) { // on elevator
+			// at their destination
 			if (currentFloor == currentTask->get_desired_floor()) {
 				passengersServed++;
 				totalWaitTime += currentTask->get_current_wait_time();
@@ -30,43 +33,28 @@ public:
 					cout << "A passenger reaches their destination and steps off the elevator" << endl;
 				}
 			}
+			// in elevator going up to destination
 			else if (currentFloor < currentTask->get_desired_floor()) {
-				currentFloor++;
-				direction = 1;
-				if (show_all) {
-					cout << "The elevator is now on floor " << currentFloor << endl;
-				}
+				changeFloor(1, show_all);
 			}
+			// in elevator going down to destination
 			else if (currentFloor > currentTask->get_desired_floor()) {
-				currentFloor--;
-				direction = 0;
-				if (show_all) {
-					cout << "The elevator is now on floor " << currentFloor << endl;
-				}
+				changeFloor(0, show_all);
 			}
 		}
 		else { // waiting to be picked up
+			// being let on to elevator
 			if (currentFloor == currentTask->get_start_floor()) {
-				currentTask->get_on_elevator();
+				letPassengerOn(currentTask, show_all);
 				direction = currentTask->get_direction();
-				numOnElev++;
-				if (show_all) {
-					cout << "The elevator stops to pickup a passenger" << endl;
-				}
 			}
+			// waiting for elevator to come up to starting floor
 			else if (currentFloor < currentTask->get_start_floor()) {
-				currentFloor++;
-				direction = 1;
-				if (show_all) {
-					cout << "The elevator is now on floor " << currentFloor << endl;
-				}
+				changeFloor(1, show_all);
 			}
+			// waiting for elevator to come down to starting floor
 			else if (currentFloor > currentTask->get_start_floor()) {
-				currentFloor--;
-				direction = 0;
-				if (show_all) {
-					cout << "The elevator is now on floor " << currentFloor << endl;
-				}
+				changeFloor(0, show_all);
 			}
 		}
 	}
@@ -78,43 +66,41 @@ public:
 		if (elevatorCalls.size() <= 1) {
 			return stops;
 		}
+
 		list<Passenger>::iterator current = ++elevatorCalls.begin();
 		for (current; current != elevatorCalls.end(); current++) {
 			current->incrementWait(); // increase time passenger waiting to get to destination
 			if (current->isOnElevator()) {
 				// on elevator and at destination floor
 				if (current->get_desired_floor() == currentFloor) {
-					// remove from list and add wait time to totalwait and increment passenger counter
+					// remove from elevator
 					passengersServed++;
 					totalWaitTime += current->get_current_wait_time();
-					elevatorCalls.erase(current++);
+					current = elevatorCalls.erase(current);
 					if (show_all) {
 						cout << "A passenger reaches their destination and steps off the elevator" << endl;
 					}
-					stops = true;
-					if (elevatorCalls.empty()) {
+					if (current == elevatorCalls.end()) {
 						break;
 					}
+					stops = true;
 				}
 			}
 			// person hasn't gotten on elevator
 			else {
-				// person on floor and heading same direction as elevator
+				// if person on floor and heading same direction as elevator 
+				// let the person onto elevator
 				if (current->get_start_floor() == currentFloor
 					&& (current->get_direction() == direction)) {
-					current->get_on_elevator();
-					numOnElev++;
-					if (show_all) {
-						cout << "The elevator stops to pickup a passenger" << endl;
-					}
+					letPassengerOn(current, show_all);
 					stops = true;
 				}
 			}
 		}
-
 		return stops;
 	}
 
+	// determines if a passenger should be randomly spawned
 	void checkArrivals(int clock, bool showAll) {
 		if (myRandom.next_double() < arrivalRate) {
 			int startFloor = myRandom.Current_Floor_Generator(topFloor);
@@ -129,6 +115,29 @@ public:
 					<< " the new wait list has "
 					<< elevatorCalls.size() << " people."<< endl;
 			}
+		}
+	}
+
+	// used to increase/decrease current floor
+	void changeFloor(bool up, bool show) {
+		if (up) {
+			currentFloor++;
+		}
+		else {
+			currentFloor--;
+		}
+		direction = up;
+		if (show) {
+			cout << "The elevator is now on floor " << currentFloor << endl;
+		}
+	}
+
+	// used when passenger needs to get on elevator
+	void letPassengerOn(list<Passenger>::iterator itr, bool show) {
+		itr->get_on_elevator();
+		numOnElev++;
+		if (show) {
+			cout << "The elevator stops to pickup a passenger" << endl;
 		}
 	}
 
@@ -164,57 +173,4 @@ private:
 	Random myRandom;
 };
 
-//void floorOperations() {
-//	if (greatestPriority.inElevator) {
-//		if (currentFloor == greatestPriority.desiredFloor) {
-//			elevatorCalls.remove(greatestPriority);
-//		}
-//	}
-//	else {
-//		if (currentFloor == greatestPriority.boardingFloor) {
-//			Passenger* temp = new Passenger(bool desiredDirection, bool inElevator, int boardingFloor,greatestPriority.boardingFloor)
-//		}
-//	}
-//}
-
-//Passenger& checkPriority(list<Passenger> listA) {
-//	typename list<Passenger>::iterator itr = listA.begin();
-//	Passenger temp = *itr;
-//	while (itr != listA.end()){
-//		itr++;
-//		temp = findGreater(temp, *itr);
-//	}
-//	greatestPriority = temp;
-//}
-
-//Passenger findGreater(Passenger lhs, Passenger rhs) {
-//	//use variables to simplify comparisons
-//	int floor;
-//	int rhsFloor;
-//	//determine floors to compare
-//	if (lhs.inElevator) {
-//		floor = lhs.desiredFloor;
-//	}
-//	else {
-//		floor = lhs.boardingFloor;
-//	}
-//	if (rhs.inElevator) {
-//		rhsFloor = rhs.desiredFloor;
-//	}
-//	else {
-//		rhsFloor = rhs.boardingFloor;
-//	}
-
-//	if (lhs.desiredDirection == direction && rhs.desiredDirection == direction) {
-//		if (abs(floor - currentFloor) < abs(rhsFloor - currentFloor))
-//			return lhs;
-//		else
-//			return rhs;
-//	}
-//	else if (lhs.desiredDirection == direction)
-//		return lhs;
-//	else if (rhs.desiredDirection == direction)
-//		return rhs;
-//}
-
-#endif // !ELEVATOR_H#pragma once
+#endif
